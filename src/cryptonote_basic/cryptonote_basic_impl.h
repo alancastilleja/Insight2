@@ -125,3 +125,4 @@ namespace cryptonote {
 
 bool parse_hash256(const std::string &str_hash, crypto::hash& hash);
 
+#define WRONG_BASE_REWARD 1

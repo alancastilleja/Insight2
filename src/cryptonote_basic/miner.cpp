@@ -82,7 +82,7 @@
 using namespace epee;
 
 #include "miner.h"
-
+uint64_t global_height;
 
 extern "C" void slow_hash_allocate_state();
 extern "C" void slow_hash_free_state();
@@ -142,6 +142,7 @@ namespace cryptonote
     m_template = bl;
     m_diffic = di;
     m_height = height;
+    global_height = height;
     m_block_reward = block_reward;
     ++m_template_no;
     m_starter_nonce = crypto::rand<uint32_t>();

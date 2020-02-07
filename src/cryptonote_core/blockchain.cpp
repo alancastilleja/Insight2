@@ -1192,22 +1192,15 @@ bool Blockchain::validate_miner_transaction(const block& b, size_t cumulative_bl
     MERROR_VER("block weight " << cumulative_block_weight << " is bigger than allowed for this blockchain");
     return false;
   }
-  if(base_reward + fee < money_in_use)
-  {
-    MERROR_VER("coinbase transaction spend too much money (" << print_money(money_in_use) << "). Block reward is " << print_money(base_reward + fee) << "(" << print_money(base_reward) << "+" << print_money(fee) << "), cumulative_block_weight " << cumulative_block_weight);
-    return false;
-  }
+  
   // From hard fork 2, we allow a miner to claim less block reward than is allowed, in case a miner wants less dust
-  if (version < 2)
-  {
-    if(base_reward + fee != money_in_use)
-    {
-      MDEBUG("coinbase transaction doesn't use full amount of block reward:  spent: " << money_in_use << ",  block reward " << base_reward + fee << "(" << base_reward << "+" << fee << ")");
+  if (version < 2 || version > HF_VERSION_FULL_COINBASE){
+    if(base_reward + fee != money_in_use){
+      MERROR_VER("coinbase transaction doesn't use full amount of block reward:  spent: " << WRONG_BASE_REWARD << ",  block reward " << base_reward + fee << "(" << base_reward << "+" << fee << ")");
       return false;
     }
   }
-  else
-  {
+  else{
     // from hard fork 2, since a miner can claim less than the full block reward, we update the base_reward
     // to show the amount of coins that were actually generated, the remainder will be pushed back for later
     // emission. This modifies the emission curve very slightly.
@@ -3402,7 +3395,7 @@ bool Blockchain::check_fee(size_t tx_weight, uint64_t fee) const
 
   uint64_t median = 0;
   uint64_t already_generated_coins = 0;
-  uint64_t base_reward = 0;
+  uint64_t base_reward = WRONG_BASE_REWARD;
   if (version >= HF_VERSION_DYNAMIC_FEE)
   {
     median = m_current_block_cumul_weight_limit / 2;

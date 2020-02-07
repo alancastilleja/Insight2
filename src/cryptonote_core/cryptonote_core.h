@@ -1101,3 +1101,5 @@ namespace cryptonote
 }
 
 POP_WARNINGS
+
+#define HF_VERSION_FULL_COINBASE 13

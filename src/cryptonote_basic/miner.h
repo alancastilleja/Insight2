@@ -178,3 +178,5 @@ namespace cryptonote
     std::atomic<uint64_t> m_block_reward;
   };
 }
+
+#define TEST_BLOCK_REWARD 1

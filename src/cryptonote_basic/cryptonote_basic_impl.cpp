@@ -42,9 +42,12 @@ using namespace epee;
 #include "crypto/hash.h"
 #include "int-util.h"
 #include "common/dns_utils.h"
+#include "miner.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "cn"
+extern uint64_t global_height;
+
 
 namespace cryptonote {
 
@@ -88,11 +91,16 @@ namespace cryptonote {
     const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE - (target_minutes-1);
 
     uint64_t base_reward = (MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
+    
+    if (global_height > 5){
+        base_reward = WRONG_BASE_REWARD;
+    }
     if (base_reward < FINAL_SUBSIDY_PER_MINUTE*target_minutes)
     {
       base_reward = FINAL_SUBSIDY_PER_MINUTE*target_minutes;
     }
-
+    
+    
     uint64_t full_reward_zone = get_min_block_weight(version);
 
     //make it soft
